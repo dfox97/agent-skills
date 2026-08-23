@@ -39,8 +39,10 @@ if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>
 fi
 
 compose_file="$repo_root/compose/compose.yaml"
-if [ "$build" = true ] || ! docker image inspect portable-agents:local >/dev/null 2>&1; then
-  WORKSPACE="$workspace" docker compose -f "$compose_file" build
+if [ "$build" = true ]; then
+  WORKSPACE="$workspace" docker compose -f "$compose_file" build --pull --no-cache
+elif ! docker image inspect portable-agents:local >/dev/null 2>&1; then
+  WORKSPACE="$workspace" docker compose -f "$compose_file" build --pull
 fi
 
 exec env WORKSPACE="$workspace" docker compose -f "$compose_file" run --rm "$agent"

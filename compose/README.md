@@ -12,11 +12,13 @@ From the repository root:
 ./compose/run pi ../my-project
 ```
 
-The workspace defaults to this repository when omitted. Rebuild after changing agent versions or `compose/Dockerfile`:
+The workspace defaults to this repository when omitted. Agent packages use their latest releases at image-build time. Refresh them explicitly with a clean, pull-through rebuild:
 
 ```sh
 ./compose/run --build claude ../my-project
 ```
+
+Normal launches reuse the existing image so startup remains fast.
 
 You can also use Compose directly:
 

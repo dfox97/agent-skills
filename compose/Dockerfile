@@ -1,8 +1,8 @@
 FROM node:24-bookworm-slim
 
-ARG CLAUDE_CODE_VERSION=2.1.241
-ARG CODEX_VERSION=0.149.0
-ARG PI_VERSION=0.84.2
+ARG CLAUDE_CODE_VERSION=latest
+ARG CODEX_VERSION=latest
+ARG PI_VERSION=latest
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
