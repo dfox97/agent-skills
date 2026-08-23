@@ -4,7 +4,7 @@
   "packages": [
     "npm:pi-web-access@0.21.0"
   ],
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "low",
   "hideThinkingBlock": false,
   "theme": "dark",
   "tuiMode": "regular",
