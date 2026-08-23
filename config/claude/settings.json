@@ -61,18 +61,6 @@
         ]
       }
     ],
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/home/danny/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [
@@ -80,18 +68,6 @@
             "type": "command",
             "command": "bash ~/.claude/hooks/update-status.sh",
             "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptExpansion": [
-      {
-        "matcher": "diff-review",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ~/.claude/hooks/diff-review-hook.mjs",
-            "timeout": 600
           }
         ]
       }

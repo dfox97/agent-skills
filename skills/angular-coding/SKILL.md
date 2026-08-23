@@ -16,13 +16,15 @@ license: MIT
 
 - **ALL new components MUST be standalone components**
 - When working with existing components, convert to standalone if the refactor is minimal
-- Must NOT set `standalone: true` inside Angular decorators - it's the default in Angular
+- Must NOT set `standalone: true` inside Angular decorators - it's the default in Angular v20+
 - Keep components small and focused on a single responsibility
 - Use `input()` and `output()` functions instead of decorators
 - Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
+- For Angular v22+, omit `changeDetection: ChangeDetectionStrategy.OnPush` because `OnPush` is the default; set it explicitly in earlier versions
 - Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
+- Prefer Signal Forms (`@angular/forms/signals`) for new forms in Angular v22+
+- When Signal Forms are unavailable, prefer Reactive forms instead of Template-driven ones
+- Implement lazy loading for feature routes
 - Do NOT use `ngClass`, use `class` bindings instead
 - Do NOT use `ngStyle`, use `style` bindings instead
 - Do NOT use the `@HostBinding` and `@HostListener` decorators - put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
@@ -46,16 +48,23 @@ license: MIT
 ### Services
 
 - Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
+- In Angular v22+, prefer `@Service` for new root singleton services
+- In earlier versions, use `@Injectable({ providedIn: 'root' })` for singleton services
 - Use the `inject()` function instead of constructor injection
 
 ### Templates
 
 - Keep templates simple and avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Use the async pipe to handle observables
 - Do not write arrow functions in templates (they are not supported)
 - Do not assume globals like (`new Date()`) are available in templates
 - Use `NgOptimizedImage` for all static images (does not work for inline base64 images)
+
+## Accessibility
+
+- Pass all AXE checks
+- Meet WCAG AA requirements, including focus management, color contrast, and ARIA attributes
 
 ## Signal Utilities
 

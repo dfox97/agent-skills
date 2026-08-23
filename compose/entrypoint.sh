@@ -11,6 +11,11 @@ shift
 skills=/opt/agent-skills
 config=/opt/agent-config
 
+if [ ! -d "$skills" ] || [ ! -d "$config" ]; then
+  printf '%s\n' 'This entrypoint must run inside the Compose container. Use ./compose/run instead.' >&2
+  exit 2
+fi
+
 replace_link() {
   source=$1
   destination=$2
