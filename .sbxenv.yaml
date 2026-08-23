@@ -1,0 +1,6 @@
+schemaVersion: "1"
+agent: claude
+workspace: ../my-project
+sandboxOptions:
+  template: danny-agent:latest
+  pullPolicy: never
