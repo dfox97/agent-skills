@@ -39,6 +39,8 @@ fi
 case "$agent" in
   claude)
     replace_link "$skills" "$HOME/.claude/skills"
+    replace_link "$config/claude/hooks" "$HOME/.claude/hooks"
+    replace_link "$config/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
     exec claude --settings "$config/claude/settings.json" "$@"
     ;;
   codex)
@@ -47,7 +49,11 @@ case "$agent" in
     ;;
   pi)
     replace_link "$config/pi/settings.json" "$HOME/.pi/agent/settings.json"
-    replace_link "$config/pi/models.json" "$HOME/.pi/agent/models.json"
+    if [ -f "$config/pi/models.json" ]; then
+      replace_link "$config/pi/models.json" "$HOME/.pi/agent/models.json"
+    else
+      rm -f "$HOME/.pi/agent/models.json"
+    fi
     replace_link "$config/pi/web-search.json" "$HOME/.pi/agent/web-search.json"
     for resource in extensions prompts themes; do
       replace_link "$config/pi/$resource" "$HOME/.pi/agent/$resource"
