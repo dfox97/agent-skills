@@ -20,8 +20,11 @@ fi
 
 agent=${1:-}
 case "$agent" in
-  claude|codex|pi) ;;
-  *) usage >&2; exit 2 ;;
+claude | codex | pi) ;;
+*)
+  usage >&2
+  exit 2
+  ;;
 esac
 shift
 
@@ -55,6 +58,8 @@ cp "$repo_root/sbx/kits/pi/spec.yaml" "$pi_kit/spec.yaml"
 cp -R "$repo_root/skills"/. "$shared_kit/files/home/.agent-setup/skills/"
 cp -R "$repo_root/config"/. "$shared_kit/files/home/.agent-setup/config/"
 cp "$repo_root/config/pi/settings.json" "$pi_kit/files/home/.pi/agent/settings.json"
+cp "$repo_root/config/pi/models.json" "$pi_kit/files/home/.pi/agent/models.json"
+cp "$repo_root/config/pi/web-search.json" "$pi_kit/files/home/.pi/agent/web-search.json"
 cp "$repo_root/config/shared/AGENTS.md" "$pi_kit/files/home/.pi/agent/AGENTS.md"
 cp -R "$repo_root/config/pi/extensions" "$pi_kit/files/home/.pi/agent/extensions"
 cp -R "$repo_root/config/pi/prompts" "$pi_kit/files/home/.pi/agent/prompts"
@@ -71,7 +76,7 @@ name="portable-${agent}-${workspace_name}-${workspace_id}"
 
 if [ "$agent" = pi ]; then
   sbx_agent=portable-pi
-  cat > "$env_dir/.sbxenv.yaml" <<EOF
+  cat >"$env_dir/.sbxenv.yaml" <<EOF
 schemaVersion: "1"
 name: "$name"
 agent: $sbx_agent
@@ -82,7 +87,7 @@ kits:
 EOF
 else
   sbx_agent=$agent
-  cat > "$env_dir/.sbxenv.yaml" <<EOF
+  cat >"$env_dir/.sbxenv.yaml" <<EOF
 schemaVersion: "1"
 name: "$name"
 agent: $sbx_agent

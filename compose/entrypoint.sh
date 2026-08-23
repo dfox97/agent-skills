@@ -42,6 +42,8 @@ case "$agent" in
     ;;
   pi)
     replace_link "$config/pi/settings.json" "$HOME/.pi/agent/settings.json"
+    replace_link "$config/pi/models.json" "$HOME/.pi/agent/models.json"
+    replace_link "$config/pi/web-search.json" "$HOME/.pi/agent/web-search.json"
     for resource in extensions prompts themes; do
       replace_link "$config/pi/$resource" "$HOME/.pi/agent/$resource"
     done

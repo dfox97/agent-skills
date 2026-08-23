@@ -15,6 +15,7 @@ RUN apt-get update \
       python3 \
       ripgrep \
       sudo \
+      tmux \
     && rm -rf /var/lib/apt/lists/* \
     && echo 'node ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/node
 
