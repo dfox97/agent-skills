@@ -1,0 +1,46 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage: ./compose/run [--build] <claude|codex|pi> [workspace]
+
+Examples:
+  ./compose/run claude ../my-project
+  ./compose/run pi ../my-project
+  ./compose/run --build codex ../my-project
+EOF
+}
+
+build=false
+if [ "${1:-}" = "--build" ]; then
+  build=true
+  shift
+fi
+
+agent=${1:-}
+case "$agent" in
+  claude|codex|pi) ;;
+  *) usage >&2; exit 2 ;;
+esac
+shift
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)
+workspace=${1:-$repo_root}
+if [ ! -d "$workspace" ]; then
+  printf 'Workspace does not exist: %s\n' "$workspace" >&2
+  exit 1
+fi
+workspace=$(CDPATH= cd -- "$workspace" && pwd -P)
+
+if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
+  printf '%s\n' 'Docker with the Compose plugin is required.' >&2
+  exit 1
+fi
+
+compose_file="$repo_root/compose/compose.yaml"
+if [ "$build" = true ] || ! docker image inspect portable-agents:local >/dev/null 2>&1; then
+  WORKSPACE="$workspace" docker compose -f "$compose_file" build
+fi
+
+exec env WORKSPACE="$workspace" docker compose -f "$compose_file" run --rm "$agent"

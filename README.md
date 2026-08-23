@@ -1,73 +1,83 @@
-# Agent skills
+# Portable agent setup
 
-A standalone collection of agent skills, plus an optional Docker Sandboxes environment for trying Danny's Claude Code workflow.
+A standalone collection of agent skills plus two isolated ways to try the same basic Claude Code, Codex, and Pi setup.
 
-## Use the skills without Docker
+- [`skills/`](skills/) is the canonical skill collection and does not depend on Docker or Docker Sandboxes.
+- [`config/`](config/) holds portable, non-secret harness configuration.
+- [`sbx/`](sbx/) runs agents in Docker Sandbox microVMs.
+- [`compose/`](compose/) runs all three agents from one conventional Docker image.
 
-[`skills/`](skills/) is the canonical skill collection. It has no dependency on Docker or Docker Sandboxes and can be installed in any compatible agent environment.
+Neither variant requires Claude Code, Codex, or Pi to be installed on the host.
 
-## Run the sandbox on Linux
+## Choose a variant
 
-### 1. Install Docker Engine and Docker Sandboxes
+| | Docker Sandboxes | Docker Compose |
+|---|---|---|
+| Host requirement | `sbx`, Docker login, hardware virtualisation | Docker Engine/Desktop with Compose |
+| Isolation | Separate microVM and kernel | Ordinary container isolation |
+| Agent installation | Built-in Claude/Codex templates; Pi installed by a kit | All three installed in one image |
+| Skills/config updates | Snapshot when a sandbox is created | Live read-only bind mounts |
+| Subscription login | Best integration, especially Codex | Works, but browser callbacks can be less convenient |
+| Resource use | Higher | Lower |
+| Maturity | SBX environments and kits are experimental | Stable Docker Compose workflow |
 
-On Ubuntu 24.04 or later:
+Start with SBX for the stronger agent boundary, then use Compose to compare simplicity and resource use.
+
+## Docker Sandboxes
+
+Install and authenticate Docker Sandboxes using the [official installation guide](https://docs.docker.com/ai/sandboxes/install/), then run:
 
 ```sh
-curl -fsSL https://get.docker.com | sudo SBX=1 sh
-sbx login
+./sbx/run claude ../my-project
+./sbx/run codex ../my-project
+./sbx/run pi ../my-project
 ```
 
-See Docker's [installation documentation](https://docs.docker.com/ai/sandboxes/install/) for the complete host requirements.
+The first run downloads the relevant template and creates a persistent sandbox. Later runs reattach to it.
 
-### 2. Build and load the agent image
+See [`sbx/README.md`](sbx/README.md) for authentication, configuration behaviour, and resetting after skill changes.
 
-From this repository:
+## Docker Compose
+
+With Docker and the Compose plugin installed:
 
 ```sh
-docker build -t danny-agent:latest .
-docker image save danny-agent:latest -o /tmp/danny-agent.tar
-sbx template load /tmp/danny-agent.tar
-rm /tmp/danny-agent.tar
+./compose/run claude ../my-project
+./compose/run codex ../my-project
+./compose/run pi ../my-project
 ```
 
-The [`Dockerfile`](Dockerfile) extends Docker's Claude Code sandbox template and copies the standalone skills into `~/.claude/skills` inside the image.
+The first run builds the shared image. Agent credentials and sessions persist in named volumes while the selected project is mounted at `/workspace`.
 
-### 3. Select a workspace
+See [`compose/README.md`](compose/README.md) for authentication and isolation details.
 
-Clone this repository beside the project you want to edit:
+## Authentication
+
+Authentication is user-specific runtime state and is never included in this repository or its images.
+
+- Claude and Pi support Anthropic subscription login through `/login`.
+- Codex supports ChatGPT subscription login.
+- Pi also supports OpenAI subscription login through `/login`.
+- API keys can be supplied through SBX secrets or host environment variables, depending on the variant.
+
+A developer needs the chosen container runtime but does not need any agent harness installed locally.
+
+## Customize the setup
+
+Edit the canonical files directly:
 
 ```text
-repos/
-├── agent-skills/
-└── my-project/
+skills/                  Agent Skills packages
+config/shared/AGENTS.md  Instructions shared across harnesses
+config/claude/            Claude Code settings
+config/codex/             Codex settings
+config/pi/                Pi settings, extensions, prompts, and themes
 ```
 
-Set the project path in [`.sbxenv.yaml`](.sbxenv.yaml):
+Keep credentials, OAuth tokens, sessions, machine-specific paths, and private keys out of `config/`.
 
-```yaml
-workspace: ../my-project
-```
+Compose sees skill and configuration changes on the next container start. An existing SBX sandbox keeps its creation-time snapshot; reset it explicitly when you want to apply repository changes.
 
-### 4. Run
+## Use the skills without isolation
 
-```sh
-sbx env run .
-```
-
-The project is mounted directly into the sandbox. Agent changes appear immediately in the normal host working tree, so Git continues to work normally outside the sandbox.
-
-Run the same command later to reattach to the persistent sandbox.
-
-## Rebuild after changing skills
-
-```sh
-sbx env rm .
-docker build -t danny-agent:latest .
-docker image save danny-agent:latest -o /tmp/danny-agent.tar
-sbx template rm danny-agent:latest 2>/dev/null || true
-sbx template load /tmp/danny-agent.tar
-rm /tmp/danny-agent.tar
-sbx env run .
-```
-
-Removing the sandbox does not delete the host workspace.
+Copy or link individual directories from [`skills/`](skills/) into a harness-supported skills directory. Pi can also install this repository as a local or Git package because it contains a conventional `skills/` directory.
