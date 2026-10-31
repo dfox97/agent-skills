@@ -3,7 +3,11 @@
 This directory contains configuration that is safe to share. Runtime state such as credentials, sessions, caches, and trust decisions belongs in each sandbox or Docker volume and must not be committed.
 
 - `shared/AGENTS.md` — instructions shared by all harnesses.
-- `claude/settings.json` — additional Claude Code settings.
+- `claude/settings.json` — Claude Code user settings.
+- `claude/statusline-command.sh` — the status line.
+- `claude/hooks/` — optional hooks, not wired by default.
+  See [`claude/README.md`](claude/README.md) for what is included, what is excluded, and how to
+  install it all on another machine.
 - `codex/config.toml` — Codex defaults.
 - `pi/settings.json` — Pi defaults and reproducible package sources.
 - `pi/extensions/`, `pi/prompts/`, `pi/themes/` — Pi resources.

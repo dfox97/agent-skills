@@ -25,38 +25,38 @@ else
 fi
 
 case "$event" in
-UserPromptSubmit)
-  prompt=$(echo "$input" | jq -r '.prompt // empty' 2>/dev/null)
-  # single line, trimmed to 60 chars
-  task=$(printf '%s' "$prompt" | tr '\n' ' ' | cut -c1-60)
-  cur=$(echo "$cur" | jq --arg t "$task" '.task = $t | .phase = "Investigating"' 2>/dev/null)
-  ;;
-PreToolUse)
-  tool=$(echo "$input" | jq -r '.tool_name // empty' 2>/dev/null)
-  case "$tool" in
-  Edit | Write | MultiEdit | NotebookEdit) phase="Implementing" ;;
-  Read | Grep | Glob) phase="Investigating" ;;
-  WebFetch | WebSearch) phase="Reading" ;;
-  Task | Agent) phase="Investigating" ;;
-  Bash)
-    cmd=$(echo "$input" | jq -r '.tool_input.command // empty' 2>/dev/null | tr '[:upper:]' '[:lower:]')
-    case "$cmd" in
-    *test* | *jest* | *karma* | *pytest* | *vitest* | *" spec"* | *ng\ test*) phase="Testing" ;;
-    *git\ commit* | *git\ push*) phase="Implementing" ;;
-    *) phase="Implementing" ;;
-    esac
+  UserPromptSubmit)
+    prompt=$(echo "$input" | jq -r '.prompt // empty' 2>/dev/null)
+    # single line, trimmed to 60 chars
+    task=$(printf '%s' "$prompt" | tr '\n' ' ' | cut -c1-60)
+    cur=$(echo "$cur" | jq --arg t "$task" '.task = $t | .phase = "Investigating"' 2>/dev/null)
     ;;
-  *) phase="" ;;
-  esac
-  [ -n "$phase" ] && cur=$(echo "$cur" | jq --arg p "$phase" '.phase = $p' 2>/dev/null)
-  ;;
-Stop)
-  cur=$(echo "$cur" | jq '.phase = "Waiting"' 2>/dev/null)
-  ;;
+  PreToolUse)
+    tool=$(echo "$input" | jq -r '.tool_name // empty' 2>/dev/null)
+    case "$tool" in
+      Edit|Write|MultiEdit|NotebookEdit) phase="Implementing" ;;
+      Read|Grep|Glob)                    phase="Investigating" ;;
+      WebFetch|WebSearch)                phase="Reading" ;;
+      Task|Agent)                        phase="Investigating" ;;
+      Bash)
+        cmd=$(echo "$input" | jq -r '.tool_input.command // empty' 2>/dev/null | tr '[:upper:]' '[:lower:]')
+        case "$cmd" in
+          *test*|*jest*|*karma*|*pytest*|*vitest*|*" spec"*|*ng\ test*) phase="Testing" ;;
+          *git\ commit*|*git\ push*)                                     phase="Implementing" ;;
+          *) phase="Implementing" ;;
+        esac
+        ;;
+      *) phase="" ;;
+    esac
+    [ -n "$phase" ] && cur=$(echo "$cur" | jq --arg p "$phase" '.phase = $p' 2>/dev/null)
+    ;;
+  Stop)
+    cur=$(echo "$cur" | jq '.phase = "Waiting"' 2>/dev/null)
+    ;;
 esac
 
 # Guard against a jq failure blanking the file.
 [ -z "$cur" ] && exit 0
-printf '%s\n' "$cur" >"$state_file" 2>/dev/null
+printf '%s\n' "$cur" > "$state_file" 2>/dev/null
 
 exit 0

@@ -9,8 +9,8 @@
 # Any failure in the checks defaults to "focused" (silent) so we never nag while you're looking.
 
 # ---- sounds (change these to taste) ----
-NOTIFY_SOUND_WIN='C:\Windows\Media\Windows Message Nudge.wav' # any C:\Windows\Media\*.wav
-NOTIFY_SOUND_MAC='/System/Library/Sounds/Tink.aiff'           # any /System/Library/Sounds/*.aiff
+NOTIFY_SOUND_WIN='C:\Windows\Media\Windows Message Nudge.wav'   # any C:\Windows\Media\*.wav
+NOTIFY_SOUND_MAC='/System/Library/Sounds/Tink.aiff'             # any /System/Library/Sounds/*.aiff
 
 # Terminal emulator names to treat as "focused" (extend for your setup).
 TERM_APPS_RE='[Ww]ez[Tt]erm|iTerm|Terminal|Ghostty|Alacritty|kitty|Hyper'
@@ -57,11 +57,11 @@ fi
 # 3) Play the sound if away. Backgrounded so the hook returns immediately.
 if [ "$away" = "1" ]; then
   if is_wsl && command -v powershell.exe >/dev/null 2>&1; then
-    (powershell.exe -NoProfile -Command "(New-Object Media.SoundPlayer '$NOTIFY_SOUND_WIN').PlaySync()" >/dev/null 2>&1) &
+    ( powershell.exe -NoProfile -Command "(New-Object Media.SoundPlayer '$NOTIFY_SOUND_WIN').PlaySync()" >/dev/null 2>&1 ) &
   elif is_mac && command -v afplay >/dev/null 2>&1; then
-    (afplay "$NOTIFY_SOUND_MAC" >/dev/null 2>&1) &
+    ( afplay "$NOTIFY_SOUND_MAC" >/dev/null 2>&1 ) &
   else
-    printf '\a' # terminal bell fallback
+    printf '\a'   # terminal bell fallback
   fi
 fi
 

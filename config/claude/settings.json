@@ -37,42 +37,6 @@
   },
   "model": "opus",
   "disableClaudeAiConnectors": true,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/update-status.sh",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/update-status.sh",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/update-status.sh",
-            "async": true
-          }
-        ]
-      }
-    ]
-  },
   "disableRemoteControl": true,
   "disableWorkflows": true,
   "statusLine": {
@@ -84,9 +48,15 @@
     "typescript-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true
   },
+  "extraKnownMarketplaces": {},
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "medium"
+    }
+  },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "theme": "dark"
 }
